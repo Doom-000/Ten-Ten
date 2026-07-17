@@ -1095,12 +1095,12 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
 
       {/* 🧭 NAVIGATION TABS */}
       <div className="max-w-7xl mx-auto px-4 mt-8">
-        <div className="flex overflow-x-auto gap-4 pb-4 pt-2 scrollbar-none snap-x">
+        <div className="grid grid-flow-col auto-cols-fr gap-4 pb-4 pt-2 scrollbar-none snap-x">
           
           <button
             onClick={() => setActiveTab("projects")}
             style={getTabButtonStyle(activeTab === "projects")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
+            className={`flex w-full justify-center items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
               activeTab === "projects" 
                 ? "text-white"
                 : "bg-white text-[#334155] border-[#CBD5E1] hover:text-emerald-700 hover:bg-emerald-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:hover:text-emerald-200 dark:hover:bg-slate-800"
@@ -1113,7 +1113,7 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
           <button
             onClick={() => setActiveTab("library")}
             style={getTabButtonStyle(activeTab === "library")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
+            className={`flex w-full justify-center items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
               activeTab === "library" 
                 ? "text-white"
                 : "bg-white text-[#334155] border-[#CBD5E1] hover:border-emerald-500/40 hover:text-emerald-700 hover:bg-emerald-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:hover:text-emerald-200 dark:hover:bg-slate-800 dark:hover:border-emerald-500/50"
@@ -1126,7 +1126,7 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
           <button
             onClick={() => setActiveTab("estimator")}
             style={getTabButtonStyle(activeTab === "estimator")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
+            className={`flex w-full justify-center items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
               activeTab === "estimator" 
                 ? "text-white"
                 : "bg-white text-[#334155] border-[#CBD5E1] hover:border-emerald-500/40 hover:text-emerald-700 hover:bg-emerald-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:hover:text-emerald-200 dark:hover:bg-slate-800 dark:hover:border-emerald-500/50"
@@ -1140,7 +1140,7 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
           <button
             onClick={() => setActiveTab("feedback")}
             style={getTabButtonStyle(activeTab === "feedback")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
+            className={`flex w-full justify-center items-center gap-2 px-6 py-3 rounded-full text-base font-semibold font-display whitespace-nowrap transition-all snap-start border ${
               activeTab === "feedback" 
                 ? "text-white"
                 : "bg-white text-[#334155] border-[#CBD5E1] hover:border-emerald-500/40 hover:text-emerald-700 hover:bg-emerald-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:hover:text-emerald-200 dark:hover:bg-slate-800 dark:hover:border-emerald-500/50"
