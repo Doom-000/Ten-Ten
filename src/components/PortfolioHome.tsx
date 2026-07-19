@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { UserProfile, PortfolioProject, ContactInfo, StickyNote, ProjectComment } from "../types";
 import { CHANNELS, CONTENT_CARDS } from "../data/contentData";
 import LocationEntryForm from "./LocationEntryForm";
@@ -332,6 +332,20 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
   const [customItemPrice, setCustomItemPrice] = useState("");
   const [customItemQty, setCustomItemQty] = useState("1");
   const [customItemUnit, setCustomItemUnit] = useState("ต้น");
+  const customItemFormRef = useRef<HTMLDivElement>(null);
+  const [billItemsHeight, setBillItemsHeight] = useState<number>(300);
+
+  useEffect(() => {
+    if (!customItemFormRef.current) return;
+    const el = customItemFormRef.current;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setBillItemsHeight(entry.contentRect.height);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const DEFAULT_PLANTS: Omit<EstimatorItem, "quantity">[] = [
     { id: "p1", name: "ต้นชมพูพันธุ์ทิพย์ (สูง 2.5 ม.)", type: "ไม้ใหญ่ขุดล้อม | ไม้ดอกร่มเงาสวยพาสเทลยอดนิยม", price: 1500, unit: "ต้น" },
@@ -1398,7 +1412,7 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
                   ติดต่อเพจ Facebook
                 </a>
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
                 {/* Left Column: Form & Selection */}
                 <div className="lg:col-span-7 space-y-6">
@@ -1464,7 +1478,7 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
                   </div>
 
                   {/* Custom Item Form */}
-                  <div className="bg-white dark:bg-[#26151A] panel-card rounded-2xl p-6 space-y-4 shadow-md">
+                  <div ref={customItemFormRef} className="bg-white dark:bg-[#26151A] panel-card rounded-2xl p-6 space-y-4 shadow-md">
                     <h3 className="font-display text-base font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-2 border-b border-[#F4F3F0] dark:border-white/5 pb-3">
                       <Plus className="w-5 h-5" />
                       เพิ่มพรรณไม้อื่นๆ หรือบริการเพิ่มเติมแบบกำหนดเอง (Custom Item)
@@ -1526,21 +1540,25 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
                 </div>
 
                 {/* Right Column: Receipt / Bill */}
-                <div className="lg:col-span-5 relative">
-                  <div className="sticky top-6 bg-white dark:bg-[#26151A] panel-card rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-3rem)]">
+                <div className="lg:col-span-5 relative flex self-stretch h-full">
+                  <div className="relative bg-white dark:bg-[#26151A] panel-card rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full w-full">
                     
                     {/* Bill Header */}
-                    <div className="p-6 bg-gradient-to-br from-emerald-50 to-white dark:from-[#0c120e] dark:to-[#121614] border-b-2 border-[#D4D1C9] dark:border-emerald-800/50 relative overflow-hidden">
-                      <div className="absolute -right-4 -top-4 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
-                      <h2 className="font-display text-xl font-black text-emerald-700 dark:text-emerald-400 flex items-center gap-2 relative z-10">
-                        <Leaf className="w-6 h-6" />
-                        SURAPA GARDEN
-                      </h2>
-                      <p className="text-xs text-[#565B59] dark:text-slate-400 mt-1 relative z-10">ใบประเมินราคาพรรณไม้เบื้องต้น</p>
+                    <div className="w-full p-6 rounded-t-2xl bg-gradient-to-br from-emerald-50 to-white dark:from-[#0c120e] dark:to-[#121614] border-b-2 border-[#D4D1C9] dark:border-emerald-800/50 relative overflow-visible">
+                      <div className="pointer-events-none absolute -right-4 -top-4 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                      <div className="relative z-10">
+                        <h2 className="font-display text-xl font-black text-emerald-700 dark:text-emerald-400 flex items-center gap-2 w-full">
+                          <Leaf className="w-6 h-6" />
+                          SURAPA GARDEN
+                        </h2>
+                        <p className="text-xs text-[#565B59] dark:text-slate-400 mt-1">ใบประเมินราคาพรรณไม้เบื้องต้น</p>
+                      </div>
                     </div>
 
-                    {/* Bill Items */}
-                    <div className="flex-1 overflow-y-auto min-h-0 p-6 custom-scrollbar">
+                    <div
+                      className="overflow-y-auto custom-scrollbar"
+                      style={{ height: `${billItemsHeight}px` }}
+                    >
                       {estItems.length === 0 ? (
                         <div className="text-center text-[#727875] dark:text-slate-500 text-sm py-8 panel-card rounded-xl">
                           ยังไม่มีรายการพรรณไม้<br/>กรุณาเพิ่มรายการจากด้านซ้าย
@@ -1548,28 +1566,27 @@ export default function PortfolioHome({ user, onUpdateUser, onLogout, onDeleteAc
                       ) : (
                         <div className="space-y-3">
                           {estItems.map((item) => (
-                            <div key={item.id} className="group relative pr-8">
-                              <div className="flex justify-between items-start gap-4">
-                                <div className="space-y-1">
-                                  <div className="text-sm font-bold text-[#1C201E] dark:text-white">{item.name}</div>
-
-                                  <div className="text-[10px] text-[#727875] dark:text-slate-400">{item.type}</div>
-                                  <div className="flex items-center gap-2 mt-1">
-                                    <div className="flex items-center bg-[#F4F3F0] dark:bg-[#301B22] rounded-md border border-[#EAE8E2] dark:border-white/10">
-                                      <button onClick={() => updateEstItemQty(item.id, item.quantity - 1)} className="px-2 py-0.5 text-[#565B59] dark:text-slate-400 hover:text-[#1C201E] dark:hover:text-white">-</button>
-                                      <span className="text-xs font-mono w-6 text-center text-[#1C201E] dark:text-slate-200">{item.quantity}</span>
-                                      <button onClick={() => updateEstItemQty(item.id, item.quantity + 1)} className="px-2 py-0.5 text-[#565B59] dark:text-slate-400 hover:text-[#1C201E] dark:hover:text-white">+</button>
+                            <div key={item.id} className="group relative pr-8 rounded-2xl border border-[#EAE8E2] dark:border-white/10 bg-[#F7F7F5] dark:bg-[#1F1A19] p-5">
+                              <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
+                                <div className="space-y-2 min-w-0">
+                                  <div className="text-sm font-bold text-[#1C201E] dark:text-white truncate w-full">{item.name}</div>
+                                  <div className="text-xs text-[#727875] dark:text-slate-400 leading-relaxed">{item.type}</div>
+                                  <div className="flex flex-wrap items-center gap-3 mt-3">
+                                    <div className="flex items-center bg-[#F4F3F0] dark:bg-[#301B22] rounded-full border border-[#EAE8E2] dark:border-white/10 px-2 py-1 gap-1">
+                                      <button onClick={() => updateEstItemQty(item.id, item.quantity - 1)} className="w-7 h-7 flex items-center justify-center rounded-full text-[#565B59] dark:text-slate-400 hover:text-[#1C201E] dark:hover:text-white">-</button>
+                                      <span className="text-xs font-mono w-8 text-center text-[#1C201E] dark:text-slate-200">{item.quantity}</span>
+                                      <button onClick={() => updateEstItemQty(item.id, item.quantity + 1)} className="w-7 h-7 flex items-center justify-center rounded-full text-[#565B59] dark:text-slate-400 hover:text-[#1C201E] dark:hover:text-white">+</button>
                                     </div>
-                                    <span className="text-xs text-[#565B59] dark:text-slate-400">x {item.price.toLocaleString()} บ. / {item.unit}</span>
+                                    <span className="text-xs text-[#565B59] dark:text-slate-400 whitespace-nowrap">x {item.price.toLocaleString()} บ. / {item.unit}</span>
                                   </div>
                                 </div>
-                                <div className="text-sm font-mono font-semibold text-emerald-600 dark:text-emerald-300 shrink-0 mt-1">
+                                <div className="text-sm font-mono font-semibold text-emerald-600 dark:text-emerald-300 shrink-0 mt-1 text-right">
                                   {(item.quantity * item.price).toLocaleString()} บ.
                                 </div>
                               </div>
                               <button 
                                 onClick={() => removeEstItem(item.id)}
-                                className="absolute top-1 right-0 p-1.5 text-rose-500/70 hover:text-rose-600 dark:hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute top-1 right-0 p-1.5 text-rose-500/70 hover:text-rose-600 dark:hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity rounded-full bg-white/0 dark:bg-black/0"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
